@@ -28,7 +28,7 @@ function giftmemberships_civicrm_buildForm($formName, &$form) {
               'sequential' => 1,
               'options' => array('limit' => 0),
             ));
-        } catch (CiviCRM_API3_Exception $e) {
+        } catch (CRM_Core_Exception $e) {
             $error = $e->getMessage();
         }
         foreach ($result['values'] as $membershipType) {
@@ -60,7 +60,7 @@ function giftmemberships_civicrm_buildForm($formName, &$form) {
                         $form->getElement('membershipselect')->setValue($membershipType);
                     }
                 }
-            } catch (CiviCRM_API3_Exception $e) {
+            } catch (CRM_Core_Exception $e) {
                 $error = $e->getMessage();
             }
         }
@@ -130,7 +130,7 @@ function giftmemberships_civicrm_postProcess($formName, &$form) {
                     }
                 }
             }
-        } catch (CiviCRM_API3_Exeception $e) {
+        } catch (CRM_Core_Exception $e) {
             $error = $e->getMessage();
         }
     }
@@ -322,7 +322,7 @@ function giftmemberships_civicrm_alterContent(&$content, $context, $tplName, &$o
                         $codeDisplay .= "<span>".$code."</span></br>";
                     }
                     $codeDisplay .= "<div class='clear'></div></div>";
-                } catch (CiviCRM_API3_Exeception $e) {
+                } catch (CRM_Core_Exception $e) {
                     // @TODO Handle error?
                     $error = $e->getMessage();
                 }
@@ -357,7 +357,7 @@ function giftmemberships_civicrm_alterContent(&$content, $context, $tplName, &$o
                         var newerhtml = newhtml.replace(/Qty/g, "Code");
                         cj(".amount_display-group ").html(newerhtml);
                       </script>';
-                    } catch (CiviCRM_API3_Exeception $e) {
+                    } catch (CRM_Core_Exception $e) {
                         // @TODO Handle error?
                         $error = $e->getMessage();
                     }
