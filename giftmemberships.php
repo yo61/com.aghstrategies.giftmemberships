@@ -270,7 +270,7 @@ function giftmemberships_civicrm_validateForm($formName, &$fields, &$files, &$fo
 function giftmemberships_civicrm_alterContent(&$content, $context, $tplName, &$object) {
     // Add code table to view contribution page.
     if ($tplName == "CRM/Contribute/Page/Tab.tpl" && !empty($object->_id)) {
-        $contributionId = $object->_id;
+        $contributionId = $object->getVar('_id');
         // Prepare table.
         $codeTable = "<div id='codeTable'><h3>Gift Membership Codes</h3><table width='100%' style=><thead><tr><th>Membership</th><th>Code</th><th>Status</th></tr></thead><tbody>";
         $sql = "SELECT * FROM civicrm_gift_membership_codes WHERE contribution_id = '{$contributionId}'";
@@ -300,7 +300,7 @@ function giftmemberships_civicrm_alterContent(&$content, $context, $tplName, &$o
     }
     // Adds display of codes purchased to ThankYou Page.
     if ($tplName == "CRM/Contribute/Form/Contribution/ThankYou.tpl") {
-        $params = $object->_params;
+        $params = $object->getVar('_params');
         $giftExists = false;
         $codeDisplay = "<fieldset id='gift-code_group' class='label-left crm-profile-view'><div class='header-dark'>Gift Membership Codes</div>";
         foreach ($params as $key => $value) {
@@ -335,7 +335,7 @@ function giftmemberships_civicrm_alterContent(&$content, $context, $tplName, &$o
         }
     }
     if ($tplName == "CRM/Contribute/Form/Contribution/Confirm.tpl" || $tplName == "CRM/Contribute/Form/Contribution/ThankYou.tpl") {
-        $fields = $object->_params;
+        $fields = $object->getVar('_params');
         foreach ($fields as $key => $field) {
             if (strpos($key, '_redeem-code') !== false) {
                 $price = explode("_", $key);
