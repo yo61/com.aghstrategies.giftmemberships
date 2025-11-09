@@ -16,7 +16,7 @@ function giftmemberships_civicrm_buildForm($formName, &$form) {
     if ($formName == "CRM_Price_Form_Field") {
         // Add gift membership to select for html_type.
         $html = $form->getElement('html_type');
-        $html->addOption('Gift Membership Field', 'gift_membership');
+        $html->addOption('Gift Memberhship Field', 'gift_membership');
         $html->addOption('Redeem Gift Membership', 'redeem_membership');
         // Add hidden field that changes value if gift memberhsip is selected.
         $form->addElement('hidden', 'gift-check', '0');
@@ -24,11 +24,8 @@ function giftmemberships_civicrm_buildForm($formName, &$form) {
         // Add membership type dropdown using api.
         $membershipSelect = array();
         try {
-            $result = civicrm_api3('MembershipType', 'get', array(
-              'sequential' => 1,
-              'options' => array('limit' => 0),
-            ));
-        } catch (CRM_Core_Exception $e) {
+            $result = civicrm_api3('MembershipType', 'get', array( 'sequential' => 1, ));
+        } catch (CiviCRM_API3_Exception $e) {
             $error = $e->getMessage();
         }
         foreach ($result['values'] as $membershipType) {
@@ -53,14 +50,14 @@ function giftmemberships_civicrm_buildForm($formName, &$form) {
                     // Set value of html_type.
                     $form->getElement('html_type')->setValue('gift_membership');
                     // Check for membership type in DB.
-                    $sql = "SELECT pfid, membership_type_id FROM civicrm_gift_membership_price_fields WHERE pfid = {$pfid};";
+                    $sql = "SELECT pfid FROM civicrm_gift_membership_price_fields WHERE pfid = {$pfid};";
                     $dao = CRM_Core_DAO::executeQuery($sql);
                     if ($dao->fetch()) {
                         $membershipType = $dao->membership_type_id;
                         $form->getElement('membershipselect')->setValue($membershipType);
                     }
                 }
-            } catch (CRM_Core_Exception $e) {
+            } catch (CiviCRM_API3_Exception $e) {
                 $error = $e->getMessage();
             }
         }
@@ -130,7 +127,7 @@ function giftmemberships_civicrm_postProcess($formName, &$form) {
                     }
                 }
             }
-        } catch (CRM_Core_Exception $e) {
+        } catch (CiviCRM_API3_Exeception $e) {
             $error = $e->getMessage();
         }
     }
@@ -269,8 +266,8 @@ function giftmemberships_civicrm_validateForm($formName, &$fields, &$files, &$fo
  */
 function giftmemberships_civicrm_alterContent(&$content, $context, $tplName, &$object) {
     // Add code table to view contribution page.
-    if ($tplName == "CRM/Contribute/Page/Tab.tpl" && !empty($object->_id)) {
-        $contributionId = $object->getVar('_id');
+    if ($tplName == "CRM/Contribute/Page/Tab.tpl") {
+        $contributionId = $object->_id;
         // Prepare table.
         $codeTable = "<div id='codeTable'><h3>Gift Membership Codes</h3><table width='100%' style=><thead><tr><th>Membership</th><th>Code</th><th>Status</th></tr></thead><tbody>";
         $sql = "SELECT * FROM civicrm_gift_membership_codes WHERE contribution_id = '{$contributionId}'";
@@ -293,14 +290,14 @@ function giftmemberships_civicrm_alterContent(&$content, $context, $tplName, &$o
         }
         $codeTable .= "</tbody></table></div>";
         // Add table to page and javascript to reposition the table.
-        if (!empty($codeExists)) {
+        if ($codeExists == true) {
             $content .= $codeTable;
             $content .= '<script>cj(".crm-info-panel:first").after(cj("#codeTable"));</script>';
         }
     }
     // Adds display of codes purchased to ThankYou Page.
     if ($tplName == "CRM/Contribute/Form/Contribution/ThankYou.tpl") {
-        $params = $object->getVar('_params');
+        $params = $object->_params;
         $giftExists = false;
         $codeDisplay = "<fieldset id='gift-code_group' class='label-left crm-profile-view'><div class='header-dark'>Gift Membership Codes</div>";
         foreach ($params as $key => $value) {
@@ -322,7 +319,7 @@ function giftmemberships_civicrm_alterContent(&$content, $context, $tplName, &$o
                         $codeDisplay .= "<span>".$code."</span></br>";
                     }
                     $codeDisplay .= "<div class='clear'></div></div>";
-                } catch (CRM_Core_Exception $e) {
+                } catch (CiviCRM_API3_Exeception $e) {
                     // @TODO Handle error?
                     $error = $e->getMessage();
                 }
@@ -335,7 +332,7 @@ function giftmemberships_civicrm_alterContent(&$content, $context, $tplName, &$o
         }
     }
     if ($tplName == "CRM/Contribute/Form/Contribution/Confirm.tpl" || $tplName == "CRM/Contribute/Form/Contribution/ThankYou.tpl") {
-        $fields = $object->getVar('_params');
+        $fields = $object->_params;
         foreach ($fields as $key => $field) {
             if (strpos($key, '_redeem-code') !== false) {
                 $price = explode("_", $key);
@@ -357,7 +354,7 @@ function giftmemberships_civicrm_alterContent(&$content, $context, $tplName, &$o
                         var newerhtml = newhtml.replace(/Qty/g, "Code");
                         cj(".amount_display-group ").html(newerhtml);
                       </script>';
-                    } catch (CRM_Core_Exception $e) {
+                    } catch (CiviCRM_API3_Exeception $e) {
                         // @TODO Handle error?
                         $error = $e->getMessage();
                     }
@@ -377,17 +374,6 @@ function giftmemberships_civicrm_config(&$config) {
 }
 
 /**
- * Implementation of hook_civicrm_xmlMenu
- *
- * @param $files array(string)
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_xmlMenu
- */
-function giftmemberships_civicrm_xmlMenu(&$files) {
-    _giftmemberships_civix_civicrm_xmlMenu($files);
-}
-
-/**
  * Implementation of hook_civicrm_install
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_install
@@ -397,77 +383,10 @@ function giftmemberships_civicrm_install() {
 }
 
 /**
- * Implementation of hook_civicrm_uninstall
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_uninstall
- */
-function giftmemberships_civicrm_uninstall() {
-    return _giftmemberships_civix_civicrm_uninstall();
-}
-
-/**
  * Implementation of hook_civicrm_enable
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_enable
  */
 function giftmemberships_civicrm_enable() {
     return _giftmemberships_civix_civicrm_enable();
-}
-
-/**
- * Implementation of hook_civicrm_disable
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_disable
- */
-function giftmemberships_civicrm_disable() {
-    return _giftmemberships_civix_civicrm_disable();
-}
-
-/**
- * Implementation of hook_civicrm_upgrade
- *
- * @param $op string, the type of operation being performed; 'check' or 'enqueue'
- * @param $queue CRM_Queue_Queue, (for 'enqueue') the modifiable list of pending up upgrade tasks
- *
- * @return mixed  based on op. for 'check', returns array(boolean) (TRUE if upgrades are pending)
- *                for 'enqueue', returns void
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_upgrade
- */
-function giftmemberships_civicrm_upgrade($op, CRM_Queue_Queue $queue = null) {
-    return _giftmemberships_civix_civicrm_upgrade($op, $queue);
-}
-
-/**
- * Implementation of hook_civicrm_managed
- *
- * Generate a list of entities to create/deactivate/delete when this module
- * is installed, disabled, uninstalled.
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_managed
- */
-function giftmemberships_civicrm_managed(&$entities) {
-    return _giftmemberships_civix_civicrm_managed($entities);
-}
-
-/**
- * Implementation of hook_civicrm_caseTypes
- *
- * Generate a list of case-types
- *
- * Note: This hook only runs in CiviCRM 4.4+.
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_caseTypes
- */
-function giftmemberships_civicrm_caseTypes(&$caseTypes) {
-    _giftmemberships_civix_civicrm_caseTypes($caseTypes);
-}
-
-/**
- * Implementation of hook_civicrm_alterSettingsFolders
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_alterSettingsFolders
- */
-function giftmemberships_civicrm_alterSettingsFolders(&$metaDataFolders = null) {
-    _giftmemberships_civix_civicrm_alterSettingsFolders($metaDataFolders);
 }
