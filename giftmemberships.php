@@ -16,7 +16,7 @@ function giftmemberships_civicrm_buildForm($formName, &$form) {
     if ($formName == "CRM_Price_Form_Field") {
         // Add gift membership to select for html_type.
         $html = $form->getElement('html_type');
-        $html->addOption('Gift Memberhship Field', 'gift_membership');
+        $html->addOption('Gift Membership Field', 'gift_membership');
         $html->addOption('Redeem Gift Membership', 'redeem_membership');
         // Add hidden field that changes value if gift memberhsip is selected.
         $form->addElement('hidden', 'gift-check', '0');
