@@ -8,7 +8,7 @@
  */
 class CRM_Giftmemberships_ExtensionUtil {
   const SHORT_NAME = 'giftmemberships';
-  const LONG_NAME = 'com.aghstrategies.giftmemberships';
+  const LONG_NAME = 'gift_memberships';
   const CLASS_PREFIX = 'CRM_Giftmemberships';
 
   /**
@@ -89,8 +89,6 @@ class CRM_Giftmemberships_ExtensionUtil {
 
 use CRM_Giftmemberships_ExtensionUtil as E;
 
-($GLOBALS['_PathLoad'][0] ?? require __DIR__ . '/mixin/lib/pathload-0.php');
-pathload()->addSearchDir(__DIR__ . '/mixin/lib');
 spl_autoload_register('_giftmemberships_civix_class_loader', TRUE, TRUE);
 
 function _giftmemberships_civix_class_loader($class) {

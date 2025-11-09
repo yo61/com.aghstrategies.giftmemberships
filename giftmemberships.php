@@ -75,7 +75,7 @@ function giftmemberships_civicrm_buildForm($formName, &$form) {
             }
         }
         // Load javascript file for the form.
-        CRM_Core_Resources::singleton()->addScriptFile('com.aghstrategies.giftmemberships', 'js/giftpricefield.js', 'html-header');
+        CRM_Core_Resources::singleton()->addScriptFile('gift_memberships', 'js/giftpricefield.js', 'html-header');
     }
     // Close Contribution Page.
 }
